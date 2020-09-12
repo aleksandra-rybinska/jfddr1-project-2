@@ -21,6 +21,9 @@
         let paddle2Y = 250;
         let player1Score = 0;
         let player2Score = 0;
+        const WINNING_SCORE = 3;
+
+        let showingWinScreen = false;
 
         const PADDLE_HEIGHT = 100;
         const PADDLE_THICK = 15;
@@ -50,9 +53,16 @@
         };
 
         function ballReset() {
+            if (player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE){
+                player1Score = 0;
+                player2Score = 0;
+                showingWinScreen = true;
+            }
             ballSpeedX = -ballSpeedX;
             ballX = canvas.width / 2;
             ballY = canvas.height / 2;
+            ballSpeedX += (ballSpeedX < 0 ? -1 : 1) + 4;
+            ballSpeedY += (ballSpeedY < 0 ? -1 : 1) + 4;
 
         }
 
@@ -66,22 +76,41 @@
         }
 
         function moveEverything() {
+            if(showingWinScreen){
+                return;
+            }
             computerMovement();
 
             ballX += ballSpeedX;
             ballY += ballSpeedY;
-            if (ballX > canvas.width || ballX < 0) {
+            // if (ballX > canvas.width || ballX < 0) {
+            //     ballReset();
+            //     return;
+            // }
+            if (ballX > canvas.width) {
+                player1Score ++;
+                ballReset();
+                return;
+            }
+            if (ballX < 0) {
+                player2Score ++;
                 ballReset();
                 return;
             }
             if (ballX < 0 + PADDLE_THICK + 15) { //paddlethick + srednica pilki
                 if (ballY > paddle1Y && ballY < paddle1Y + PADDLE_HEIGHT) {
                     ballSpeedX = -ballSpeedX;
+
+                    let deltaY = ballY - (paddle1Y+PADDLE_HEIGHT/2);
+                    ballSpeedY = deltaY * 0.15;
                 };
             }
             if (ballX > canvas.width - PADDLE_THICK - 15) {
                 if (ballY > paddle2Y && ballY < paddle2Y + PADDLE_HEIGHT) {
                     ballSpeedX = -ballSpeedX;
+
+                    let deltaY = ballY - (paddle2Y+PADDLE_HEIGHT/2);
+                    ballSpeedY = deltaY * 0.15;
                 };
             }
 
@@ -94,12 +123,34 @@
         }
 
         function drawEverything() {
+            var fontArgs = canvasContext.font.split(' ');
+            var newSize = '20px';
+            canvasContext.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
             colorRect(0, 0, canvas.width, canvas.height, "#b8f3f7"); //kolor tła (boisko)
+            if(showingWinScreen){
+                canvasContext.fillStyle = "white";
+                canvasContext.fillText("click here to try again", 100, 100);
+                canvasContext.fillStyle = "#9395f3";
+                canvasContext.fillText("Player 2 wins!", 300, 300);
+                return;
+                };
+            // if (showingWinScreen && player1Score >= WINNING_SCORE) {
+            //         canvasContext.fillStyle = "white";
+            //         canvasContext.fillText("click here to try again", 100, 100);
+            //         canvasContext.fillStyle = "#f06e87";
+            //         canvasContext.fillText("Player 1 wins", 300, 300);
+            //     };
+            //     return;
+            // }
             colorRect(canvas.width - PADDLE_THICK, paddle2Y, PADDLE_THICK, PADDLE_HEIGHT, "#9395f3"); //computer pad
+            // canvas.font = "30px Arial";
+            canvasContext.fillText("Player 2", canvas.width-130,70);
+            canvasContext.fillText(player2Score, canvas.width-100,100);
             colorRect(0, paddle1Y, PADDLE_THICK, PADDLE_HEIGHT, "#f06e87"); // pad playera
+            canvasContext.fillText("Player 1", 70,70);
+            canvasContext.fillText(player1Score, 100,100);
             colorCircle(ballX, ballY, 12, "#974596"); //piłka
-
-            canvasContext.fillText("score Table", 100,100);
+            
         }
 
         function colorCircle(centerX, centerY, radius, drawColor) {
