@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif, Arial, Helvetica;
+            background: #fcfcfc;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 100px;
+        }
+
+        .panel {
+            height: 50px;
+            color: #ef5950;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 3px #e8edf1;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            padding: 20px;
+            border-radius: 5px;
+            border: 2px solid #585954;
+            background: #abc8da;
+        }
+
+        .board__item {
+            position: relative;
+            background: #e8edf1;
+            border: 2px solid #585954;
+            border-radius: 5px;
+        }
+
+        .board__item:hover {
+            background: #ffb993;
+            transition: all 0.2s linear;
+            cursor: pointer;
+        }
+
+        .board__item--filled-X::before,
+        .board__item--filled-X::after {
+            position: absolute;
+            content: "";
+            height: 12px;
+            width: 100%;
+            top: 50%;
+            left: 0;
+            background: #ef5950;
+        }
+
+        .board__item--filled-X::before {
+            transform: translateY(-50%) rotate(-45deg);
+        }
+
+        .board__item--filled-X::after {
+            transform: translateY(-50%) rotate(45deg);
+        }
+
+        .board__item--filled-O::before {
+            position: absolute;
+            content: "";
+            border-radius: 50%;
+            border: 12px solid #609bc9;
+            height: 60%;
+            width: 60%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .reset-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: 2px solid #585954;
+            border-radius: 5px;
+            background: #abc8da;
+            font-weight: bold;
+        }
+
+        .reset-button:hover {
+            background: #585954;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s linear;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1 class="panel"></h1>
+        <div class="board">
+            <div class="board__item" data-pos="0"></div>
+            <div class="board__item" data-pos="1"></div>
+            <div class="board__item" data-pos="2"></div>
+            <div class="board__item" data-pos="3"></div>
+            <div class="board__item" data-pos="4"></div>
+            <div class="board__item" data-pos="5"></div>
+            <div class="board__item" data-pos="6"></div>
+            <div class="board__item" data-pos="7"></div>
+            <div class="board__item" data-pos="8"></div>
+        </div>
+        <button class="reset-button">Reset game</button>
+    </div>
+
+    <script>
+        const fieldElements = document.querySelectorAll('.board__item');
+        const winConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ]
+
+        const panel = document.querySelector('.panel');
+        const displayWinMessage = () => {
+            panel.innerText = `The winner is ${activePlayer}!`;
+        }
+
+        const displayTieMessage = () => {
+            panel.innerText = `Try again!`;
+        }
+
+        const button = document.querySelector('.reset-button');
+
+        let activePlayer;
+        let gameActive;
+        let fields;
+
+        const resetGame = () => {
+            fields = ['', '', '', '', '', '', '', '', ''];
+            activePlayer = "X";
+            gameActive = true;
+        };
+
+        const clearMessage = () => {
+            panel.innerText = "";
+
+        };
+
+        const isBoardFull = () => {
+            return fields.find(field => field === "") === undefined;
+        };
+
+        resetGame();
+
+        const validateGame = () => {
+            let gameWon = false;
+            for (let i = 0; i <= 7; i++) {
+                const [posA, posB, posC] = winConditions[i];
+                const value1 = fields[posA];
+                const value2 = fields[posB];
+                const value3 = fields[posC];
+
+                if (value1 === value2 && value1 === value3 && value1 !== "") {
+                    gameWon = true;
+                    break;
+                };
+            };
+            if (gameWon){
+                    gameActive = false;
+                    displayWinMessage();
+            } else if (isBoardFull()) {
+                gameActive = false;
+                displayTieMessage;
+            };
+        };
+
+        fieldElements.forEach(field => {
+            field.addEventListener("click", evt => {
+                const { pos } = evt.target.dataset;
+
+                if (gameActive && fields[pos] === "") {
+                    fields[pos] = activePlayer;
+                    evt.target.classList.add(`board__item--filled-${activePlayer}`);
+                    validateGame();
+                    activePlayer = activePlayer === "X" ? "O" : "X";
+                };
+            });
+        });
+
+        const handleButtonClick = () => {
+            resetGame();
+            fieldElements.forEach(field => {
+                field.classList.remove("board__item--filled-X", "board__item--filled-O")
+            });
+            clearMessage();
+        };
+
+        button.addEventListener('click', handleButtonClick)
+
+    </script>
+</body>
+
+</html>
