@@ -158,7 +158,10 @@
         };
 
         const isBoardFull = () => {
-            return fields.find(field => field === "") === undefined;
+            const firstEmptyFieldFound = fields.find(field => field === "");
+            return firstEmptyFieldFound === undefined;
+            // powyższe działa, poniżej w komentarzu nie działa
+            // return !fields.some(!field => (field === ""));
         };
 
         resetGame();
@@ -181,7 +184,7 @@
                     displayWinMessage();
             } else if (isBoardFull()) {
                 gameActive = false;
-                displayTieMessage;
+                displayTieMessage();
             };
         };
 

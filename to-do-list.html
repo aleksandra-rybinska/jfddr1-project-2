@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To do list</title>
+    <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Tammudu+2&display=swap" rel="stylesheet">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Baloo Tammudu 2', cursive, sans-serif;
+        }
+        body{
+            height: 100%;
+            background: #222;
+        }
+        h1{
+            margin: 3rem 0 0.5rem 0;
+            font-size: 3rem;
+            font-weight: 50;
+            text-align: center;
+            color: #fff;
+        }
+        .styling {
+            font-weight: 800;
+            color: #00ffff;
+        }
+        .inputDiv {
+            display: flex;
+            justify-content: center;align-items: center;
+            text-align: center;
+        }
+        .inputDiv .input {
+            margin: 0.25rem;
+            padding: 8px 25px 2px 25px;
+            height: 40px;
+            width: 450px;
+            outline: none;
+            border: none;
+            background: #fff;
+            font-size: 1.15rem;
+            border-radius: 25px;
+        }
+        .addButton{
+            margin-left: 5px;
+            height: 40px;
+            width: 40px;
+            border-radius: 20px;
+            outline: none;
+            border: none;
+            background: #00ffff;
+            color: #fff;
+            cursor: pointer;
+        }
+        .addButton:hover {
+            background: #00ccff;
+        }
+        .container {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .item {
+            margin-bottom: 1.5rem;
+            padding: 0.5rem;
+            border-bottom: 2px solid #fff;
+        }
+        .itemInput {
+            width: 350px;
+            background: none;
+            outline: none;
+            color: #fff;
+            border: none;
+            font-size: 1.4rem;
+        }
+        .editButton {
+            margin: 0 0.5rem;
+            font-size: 1.4rem;
+            background: none;
+            outline: none;
+            color: #00ffff;
+            border: none;
+            cursor: pointer;
+        }
+        .removeButton {
+            font-size: 1.4rem;
+            background: none;
+            outline: none;
+            color: #fc2037;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1><span class="styling">TO DO </span>List</h1>
+    <div class="inputDiv">
+        <input class="input" type="text" placeholder="What do you need to do?">
+        <button class="addButton"><i class="fas fa-plus"></i></button>
+    </div>
+    <div class="container">
+        <!-- 
+            <div class="item">
+                <input type="text" class="itemInput" value="Sport" disabled>
+                <button class="editButton">EDIT</button>
+                <button class="removeButton">Remove</button>
+            </div>
+         -->
+    </div>
+
+    <script>
+        const addButton = document.querySelector('.addButton');
+        const container = document.querySelector('.container');
+        let input = document.querySelector('.input');
+
+        class item {
+            constructor(itemName){
+                this.createDiv(itemName);
+            };
+            createDiv(itemName){
+                let input = document.createElement('input');
+                input.value = itemName;
+                input.disabled = true;
+                input.classList.add('itemInput');
+                input.type = "text";
+
+                let itemBox = document.createElement('div');
+                itemBox.classList.add('item');
+
+                let editButton = document.createElement('button');
+                editButton.innerHTML = "EDIT";
+                editButton.classList.add("editButton");
+
+                let removeButton = document.createElement('button');
+                removeButton.innerHTML = "REMOVE";
+                removeButton.classList.add("removeButton");
+
+                container.appendChild(itemBox);
+
+                itemBox.appendChild(input);
+                itemBox.appendChild(editButton);
+                itemBox.appendChild(removeButton);
+
+                editButton.addEventListener('click', () => this.edit(input));
+                
+                removeButton.addEventListener("click", () => this.remove(itemBox)); 
+            };
+            edit(input){
+                input.disabled = !input.disabled;
+            };
+            remove(item){
+                container.removeChild(item);
+            };
+        };
+
+        function check(){
+            if (input.value != ""){
+                new item(input.value);
+                input.value = "";
+            };
+        };
+
+        addButton.addEventListener("click", check);
+        window.addEventListener('keydown', (e) => {
+            if (e.which == 13){
+                check();
+            };
+        });
+
+    </script>
+
+</body>
+</html>
